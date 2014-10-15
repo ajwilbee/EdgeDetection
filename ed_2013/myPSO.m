@@ -1,4 +1,4 @@
-function [global_best_position global_best_fitness]= myPSO(imgGrey, Img, coef, iter, cc)
+function [gbp, global_best_fitness,local_best_position,local_best_fitness]= myPSO(imgGrey, Img, coef, iter, cc)
 
 % Initialization
 n = size (cc ,1);            % Size of the swarm " no of birds "
@@ -21,7 +21,7 @@ current_fitness = zeros(n,1);
 current_position = cc';
 velocity = randn(dim,n) ;
 local_best_position  = current_position ;
-globl_best_position= zeros(dim,n);
+globl_best_position = zeros(dim,n);
 
 
 for i = 1:n
@@ -102,8 +102,8 @@ while  ( iter < iteration )
     end
     
     % Global fitness values
-    global_best_fitness
-    k=globl_best_position(:,1)
+%     global_best_fitness
+%     k=globl_best_position
     
     
     velocity = cns *(velocity + c1*(R1.*(local_best_position-current_position)) + c2*(R2.*(globl_best_position-current_position)));
@@ -127,6 +127,6 @@ while  ( iter < iteration )
     
 end % end of while loop its mean the end of all step that the birds move it
 
-global_best_position = globl_best_position(:,1);
+gbp = globl_best_position(:,1);
 
 
