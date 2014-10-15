@@ -8,7 +8,7 @@ clc
 %%
 ImageFilesPath = 'C:\Users\ajw4388\Documents\Thesis\BSR\BSDS500\data\images\test';
 GroundTruthFilesPath = 'C:\Users\ajw4388\Documents\Thesis\BSR\BSDS500\data\groundTruth\test';
-ImageSaveFolderName = 'PSO_AllImages'; % make this ahead of time
+ImageSaveFolderName = 'PSO_AllImages_2'; % make this ahead of time
 ImageSaveFolder = [pwd '\' ImageSaveFolderName];
 mkdir(ImageSaveFolder);
 
@@ -17,16 +17,18 @@ ImageFiles = dir(fullfile(ImageFilesPath, '*.jpg'));
 GroundTruthFiles = dir(fullfile(GroundTruthFilesPath, '*.mat'));
 
 %%
-iteration =100;
+iteration =1;
 %starting point for PSO: 1-> division offset 2-> fuzzy boundery 3-> CA rule
 parameters = [60 0.3 23;79 1 124; 105 0 321; 23 0.3 452;78 0.01 35;92 0.6 326;73 0.43 168;86 0.87 245; 112 0.54 410;124 0.67 203;
               51 0.23 123;69 0.89 24; 101 0.34 121; 39 0.4 45;71 0.19 355;97 0.73 56;134 0.3 18;35 0.71 45;68 0.47 386;82 0.712 178;];
-          
+          imFullName =ImageFiles(1).name(1:end-4);
+    im1 = imread(ImageFiles(1).name);
 size(parameters);
 c1 =2.01;
 c2 = 2.01;
 [row,col] = size (im1);
 coef =[.73 c1 c2];
+whichGT = 2;
 %dbstop in fit_ness
 %% 
 
@@ -39,7 +41,7 @@ coef =[.73 c1 c2];
     imgGT = double(groundTruth{1}.Boundaries);
     mkdir(ImageSaveFolderName,imFullName);
     imwrite(im,strcat([ImageSaveFolder '\' imFullName '\'],'Original.jpg'));
-    imwrite(groundTruth{1}.Boundaries,strcat([ImageSaveFolder '\' imFullName '\'],'GroundTruth.jpg'));
+    imwrite(groundTruth{whichGT}.Boundaries,strcat([ImageSaveFolder '\' imFullName '\'],'GroundTruth.jpg'));
 
      sobel_edge =edge(rgb2gray(imread(ImageFiles(i).name)),'sobel',0.08);
      canny_edge =edge(rgb2gray(imread(ImageFiles(i).name)),'canny',0.1);
@@ -67,9 +69,10 @@ coef =[.73 c1 c2];
     subplot(2,3,5);imshow(bestCAEdgeImage);
     title(['Proposed Method: ', num2str(bestPosition)])
     subplot(2,3,6);imshow(getMaskCA(parameters_vectors(3,i)));
-    title(['Utilized CA'])
+    title(['Utilized CA' num2str(parameters_vectors(3,i))])
     saveas( figure(bestParameters(3,1)),strcat([ImageSaveFolderName '\' imFullName '\'],num2str(parameters_vectors(3,i)),'.jpg'),'jpg');
     save(strcat([ImageSaveFolderName '\' imFullName '\'],num2str(parameters_vectors(3,i))));
+    close all;
  end
     
  

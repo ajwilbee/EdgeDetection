@@ -66,7 +66,7 @@ for imNum = 10:length(ImageFiles)
         for j=1:m
             if (j+2<=m) && (i+2<=n)
                     mask=IGrey(i:i+2,j:j+2);
-                    rule_nbd=sumsum((MaskCA.*mask));
+                    rule_nbd=sum(sum(MaskCA.*mask));
                     %% Fuzzy CA sum the cells of the rule and then divide by weighted sum to determine next state
                     mf = sum(abs(mask(2,2)-rule_nbd))/(sum( abs(mask(2,2)-rule_nbd))+t); %why this step?
                     if mf >0.3
