@@ -15,8 +15,8 @@ function [val,diffMap] = BDM(imageA,imageB,wFunc,k,dist)
 %   Baddeley's Delta Metric [1,2]. For usages, see [3,4].
 %
 % [Inputs]
-%   imageA(mandatory)- First binary image
-%   imageB(mandatory)- Second binary image
+%   imageA(mandatory)- First binary image ground truth
+%   imageB(mandatory)- Second binary image edge detection attempt
 %   wFunc(optional)- Function w used in the blending of the distances.
 %       It can be
 %           'x'     ->  w(x)=x
@@ -139,11 +139,48 @@ elseif(strfind(wFunc,'minX'))
 else
     error('Wrong parameters in function BDM: %s is not a valid w function name',wFunc);
 end
-
 diffMap=abs(mapA-mapB);
+%%Figure of Merit Based Fitness Functions, Wenlong Fu
+%in Genetic Programming for Edge Detection
+% breaks because it does not take into account all pixels and will let a
+% static image pass, in all cases
+% DFP = diffMap .* imageB;%the distance of one predicted edge point i to the nearest true edge point
+% DTP= diffMap.* imageA;% the nearest distance from a true edge point i to a predicted edge point
+% DOverlap = diffMap.* (imageA.*imageB);
+% DUnion = DFP + DTP - DOverlap;
+% alpha = 1/9; % balances for type one errors
+% beta = 1/9; % is a factor for the response on the false edge points
+% Np = sum(sum(imageB));
+% Nt = sum(sum(imageA));
+% Nfm = sum(sum(imageB - (imageA.*imageB))); % number of false positives
+% unionNpt = Np+Nt - Nfm;
+% divisor = max([Np Nt]);
+% 
+% all of the exponents on these functions can be replaced by K and may need
+% to be k rooted at the end like the BDM
+% FOM = 1/divisor*sum(sum(1./(1+alpha.*DFP.^2)));
+%  Fnn = (1/Nt*sum(sum(1./(1+alpha.*DTP))))*(1/(1+(beta*Nfm/Nt)));
+% Fb = 1/(unionNpt)*sum(sum(1./(1+alpha*DUnion.^2)));
+% if(Fnn < 5)
+%    this = 5; 
+% end
+% val = Fnn;
 
 
-val= ((1/numPos)*(sum(sum(diffMap.^k)))).^(1/k);
+
+%% my attempt
+%
+%increases the penalty for false negatives, a false negative occures when
+%the difference in the distance between the closest edge point gets
+%sufficiently large (in other words the edge point has been moved more than
+%x distance away from where the edge is supposed to be. This penalty is
+%included because the results to this point have been yeilding sparse
+%images, thus the sparsity of images must be discouraged in the fitness
+
+
+val = ((1/numPos)*((sum(sum(diffMap.^k)))+sum(sum((diffMap.*single(diffMap >10)).^k)))).^(1/k);
+% old function original BDM or FOM
+%val= ((1/numPos)*(sum(sum(diffMap.^k)))).^(1/k);
 
 %---------------------------
 %% FINAL PROCEDURES

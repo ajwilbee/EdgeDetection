@@ -101,6 +101,9 @@ while  ( iter < iteration )
         
     end
     
+    if(local_best_position(3,:)>511)
+        test = 0;
+    end
     % Global fitness values
 %     global_best_fitness
 %     k=globl_best_position
@@ -109,8 +112,7 @@ while  ( iter < iteration )
     velocity = cns *(velocity + c1*(R1.*(local_best_position-current_position)) + c2*(R2.*(globl_best_position-current_position)));
     current_position = current_position + velocity;
     current_position = [abs(round(current_position(1,:))); abs(current_position(2,:)); abs(round(current_position(3,:)))] ;
-    
-    if (round(current_position(3,:))>511) | (current_position(1,:)>150) | (current_position(2,:)>1) 
+    if (sum(round(current_position(3,:))>511)>0 | sum((current_position(1,:)>150))>0 | sum((current_position(2,:)>1))>0) 
         current_position(1,:)=45;
         current_position(3,:)=250;
         current_position(2,:)=0.5; 

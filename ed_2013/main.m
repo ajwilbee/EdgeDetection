@@ -8,7 +8,7 @@ clc
 %%
 ImageFilesPath = 'C:\Users\ajw4388\Documents\Thesis\BSR\BSDS500\data\images\test';
 GroundTruthFilesPath = 'C:\Users\ajw4388\Documents\Thesis\BSR\BSDS500\data\groundTruth\test';
-ImageSaveFolderName = 'PSO_AllImages_2'; % make this ahead of time
+ImageSaveFolderName = 'PSO_AllImages_SparseTest'; % make this ahead of time
 ImageSaveFolder = [pwd '\' ImageSaveFolderName];
 mkdir(ImageSaveFolder);
 
